@@ -51,7 +51,7 @@ public:
 class Ball {
 private:
 	const float m_radius = 5; 
-	float m_speed = 300;
+	struct { float x = 300, y = 300; } m_speed;
 	Color m_colour = WHITE;
 	Vector2 m_position;
 
@@ -60,8 +60,13 @@ public:
 		m_position = position;
 	}
 
+	void Move() {
+		m_position.x += m_speed.x * GetFrameTime();
+		m_position.y += m_speed.y * GetFrameTime();
+	}
+
 	void Render() {
-		DrawCircle(m_position.x, m_position.y, m_radius, m_colour);
+		DrawCircle((int) m_position.x, (int) m_position.y, m_radius, m_colour);
 	}
 };
 
@@ -80,6 +85,7 @@ int main() {
 		ClearBackground(BLACK);
 
 
+		ball.Move();
 
 
 		ball.Render();
