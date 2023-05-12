@@ -1,8 +1,8 @@
 #include "raylib.h"
 
-	enum Sides {
-	LEFT = 0,
-	RIGHT = 1
+enum Sides {
+LEFT = 0,
+RIGHT = 1
 };
 
 class Paddle {
@@ -48,22 +48,41 @@ public:
 	}
 };
 
+class Ball {
+private:
+	const float m_radius = 5; 
+	float m_speed = 300;
+	Color m_colour = WHITE;
+	Vector2 m_position;
 
+public:
+	Ball(Vector2 position) {
+		m_position = position;
+	}
+
+	void Render() {
+		DrawCircle(m_position.x, m_position.y, m_radius, m_colour);
+	}
+};
 
 int main() {
 	InitWindow(800, 600, "Pong");
 	SetTargetFPS(144);
 
-	const Vector2 SCREEN_CENTRE = { GetScreenWidth() / 2 ,  GetScreenHeight() / 2 };
+	const Vector2 screenCentre = { GetScreenWidth() / 2.0F ,  GetScreenHeight() / 2.0F };
 
-	Paddle leftPaddle(LEFT, {50, SCREEN_CENTRE.y});
-	Paddle rightPaddle(RIGHT, { GetScreenWidth() - 50.0F, SCREEN_CENTRE.y });
-
+	Paddle leftPaddle(LEFT, {50, screenCentre.y});
+	Paddle rightPaddle(RIGHT, { GetScreenWidth() - 50.0F, screenCentre.y });
+	Ball ball(screenCentre);
 
 	while (!WindowShouldClose()) {
 		BeginDrawing();
 		ClearBackground(BLACK);
 
+
+
+
+		ball.Render();
 		leftPaddle.Render();
 		rightPaddle.Render();
 
