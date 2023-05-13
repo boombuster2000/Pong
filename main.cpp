@@ -25,8 +25,8 @@ public:
 		m_position = position;
 
 		if (side == LEFT) {
-			m_controls.up = KEY_A;
-			m_controls.down = KEY_D;
+			m_controls.up = KEY_W;
+			m_controls.down = KEY_S;
 		}
 		else if (side == RIGHT) {
 			m_controls.up = KEY_UP;
@@ -48,6 +48,15 @@ public:
 
 	int GetPoints() {
 		return m_points;
+	}
+
+	void Move() {
+		if (IsKeyDown(m_controls.up)) {
+			m_position.y -= m_speed * GetFrameTime();
+		}
+		else if (IsKeyDown(m_controls.down)) {
+			m_position.y += m_speed * GetFrameTime();
+		}
 	}
 
 	void Render() {
@@ -126,6 +135,8 @@ int main() {
 
 		checkCollitions(&ball, leftPaddle, rightPaddle);
 		ball.Move();
+		leftPaddle.Move();
+		rightPaddle.Move();
 
 		ball.Render();
 		leftPaddle.Render();
