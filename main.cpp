@@ -9,6 +9,10 @@ struct Speed {
 	float x, y;
 };
 
+struct Size {
+	float width, height;
+};
+
 class Paddle {
 private:
 	Sides m_side;
@@ -16,7 +20,7 @@ private:
 	float m_speed = 300;
 	Vector2 m_position;
 	Color m_colour = WHITE;
-	struct { float width = 10, height = 100; } m_size;
+	Size m_size = { 10, 100};
 	struct { KeyboardKey up, down; } m_controls;
 
 public:
@@ -48,6 +52,10 @@ public:
 
 	int GetPoints() {
 		return m_points;
+	}
+
+	Size GetSize() {
+		return m_size;
 	}
 
 	void Move() {
@@ -84,6 +92,9 @@ public:
 		return m_speed;
 	}
 
+	const float GetRadius() {
+		return m_radius;
+	}
 	void SetPosition(Vector2 position) {
 		m_position = position;
 	}
@@ -103,11 +114,17 @@ public:
 
 
 void checkCollitions(Ball* ball, Paddle leftPaddle, Paddle rightPaddle) {
-	Vector2 ballPosition = (*ball).GetPosition();
-	Speed ballSpeed = (*ball).GetSpeed();
-	Vector2 leftPaddlePosition = leftPaddle.GetPosition();
-	Vector2 rightPaddlePosition = rightPaddle.GetPosition();
+	const Vector2 ballPosition = (*ball).GetPosition();
+	const Speed ballSpeed = (*ball).GetSpeed();
+	const float ballRadius = (*ball).GetRadius();
 
+	const Vector2 leftPaddlePosition = leftPaddle.GetPosition();
+	const Size leftPaddleSize = leftPaddle.GetSize();
+
+	const Vector2 rightPaddlePosition = rightPaddle.GetPosition();
+	const Size rightPaddleSize = rightPaddle.GetSize();
+
+	// checks collitions on top and bottom of screen
 	if (ballPosition.y < 0) {
 		(*ball).SetPosition({ ballPosition.x, 0 });
 		(*ball).SetSpeed({ ballSpeed.x, -ballSpeed.y });
@@ -115,6 +132,18 @@ void checkCollitions(Ball* ball, Paddle leftPaddle, Paddle rightPaddle) {
 	else if (ballPosition.y > GetScreenHeight()) {
 		(*ball).SetPosition({ ballPosition.x, (float) GetScreenHeight()});
 		(*ball).SetSpeed({ ballSpeed.x, -ballSpeed.y });
+	}
+
+	// checks collitions with paddles
+	if (CheckCollisionCircleRec(ballPosition, ballRadius, leftPaddle.GetRect())) {
+		if (ballSpeed.x < 0) {
+			(*ball).SetSpeed({ ballSpeed.x * -1.1f, (ballPosition.y - leftPaddlePosition.y) / (leftPaddleSize.height / 2) * ballSpeed.x});
+		}
+	}
+	else if (CheckCollisionCircleRec(ballPosition, ballRadius, rightPaddle.GetRect())) {
+		if (ballSpeed.x > 0) {
+			(*ball).SetSpeed({ ballSpeed.x * -1.1f, (ballPosition.y - rightPaddlePosition.y) / (rightPaddleSize.height / 2) * -ballSpeed.x });
+		}
 	}
 }
 
