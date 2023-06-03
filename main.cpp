@@ -39,6 +39,7 @@ private:
 	Color m_colour = WHITE;
 	Size m_size = { 10, 100 };
 	struct { KeyboardKey up, down; } m_controls;
+	Texture2D m_texture = LoadTexture("resources/textures/Paddle.png");
 
 public:
 	Paddle(Sides side, Vector2 position) {
@@ -56,14 +57,15 @@ public:
 		}
 	}
 
-	Rectangle GetRect() {
-		return Rectangle{ m_position.x - (m_size.width / 2), m_position.y - (m_size.height / 2), m_size.width, m_size.height };
+	Rectangle GetRect() { //rect version of texture to keep collitions in sync.
+		Vector2 centrePostition = { m_position.x - (m_size.width / 2), m_position.y - (m_size.height / 2) };
+		return Rectangle{centrePostition.x, centrePostition.y, m_size.width, m_size.height };
 	}
 
 	void ResetPosition() {
 		m_position = m_originalPosition;
 	}
-	
+
 	Vector2 GetPosition() {
 		return m_position;
 	}
@@ -94,7 +96,9 @@ public:
 	}
 
 	void Render() {
-		DrawRectangleRec(GetRect(), WHITE);
+		Rectangle source = {0,0, m_size.width, m_size.height}; // What part of texture you want
+		Rectangle destination = {m_position.x, m_position.y, m_size.width, m_size.height}; // Where it will be rendered
+		DrawTexturePro(m_texture, source, destination, {m_size.width/2, m_size.height/2}, 0, WHITE);
 	}
 };
 
