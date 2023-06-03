@@ -19,7 +19,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="x64\Release\Pong.exe" />
-  </ItemGroup>
 </Project>
