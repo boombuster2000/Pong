@@ -1,5 +1,4 @@
-﻿/vcpkg
-/.vs/Pong
+﻿/.vs/Pong
 /x64/Debug
 /x64/Release/Pong.tlog
 /x64/Release/main.obj
