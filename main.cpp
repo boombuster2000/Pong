@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <iostream>
 
 enum Sides {
 LEFT = 0,
@@ -75,7 +76,6 @@ public:
 	void AddPoint() {
 		m_points++;
 	}
-
 
 	int GetPoints() {
 		return m_points;
@@ -173,11 +173,14 @@ void checkCollitions(Ball* ball, Paddle leftPaddle, Paddle rightPaddle) {
 	// checks collitions with paddles
 	if (CheckCollisionCircleRec(ballPosition, ballRadius, leftPaddle.GetRect())) {
 		if (ballSpeed.x < 0) {
+			//changes angle depending where hit on paddle, closer to middle of paddle less of angle it bounces off (slower y speed)
 			(*ball).SetSpeed({ ballSpeed.x * -1.1f, (ballPosition.y - leftPaddlePosition.y) / (leftPaddleSize.height / 2) * ballSpeed.x});
 		}
 	}
 	else if (CheckCollisionCircleRec(ballPosition, ballRadius, rightPaddle.GetRect())) {
 		if (ballSpeed.x > 0) {
+			//changes angle depending where hit on paddle, closer to middle of paddle less of angle it bounces off (slower y speed)
+
 			(*ball).SetSpeed({ ballSpeed.x * -1.1f, (ballPosition.y - rightPaddlePosition.y) / (rightPaddleSize.height / 2) * -ballSpeed.x });
 		}
 	}
@@ -209,34 +212,50 @@ int main() {
 	Ball ball(screenCentre, Speed {300,300});
 
 	bool won = false;
+	bool reseted = true;
 
+	// main game
 	while (!WindowShouldClose()) {
 		BeginDrawing();
 		ClearBackground(BLACK);
 
-		if (!won) {
+		if (!won) { // freezes movement if there is a winner
 			checkCollitions(&ball, leftPaddle, rightPaddle);
 			ball.Move();
 			leftPaddle.Move();
 			rightPaddle.Move();
 		}
 
+		//Render objects
 		ball.Render();
 		leftPaddle.Render();
 		rightPaddle.Render();
+
+
+		// Render Points
+		Text leftPaddlePointsText = { TextFormat("%i", leftPaddle.GetPoints()), 30};
+		Text rightPaddlePointsText = { TextFormat("%i", rightPaddle.GetPoints()), 30 };
+		
+		leftPaddlePointsText.Render({ 30,40 }, YELLOW);
+		rightPaddlePointsText.Render({ (float) GetScreenWidth() - 30,40}, YELLOW);
+
 
 		Win win = checkWin(ball);
 
 		if (win.side != NONE and win.text != NULL) {
 			won = true;
 
-			if (win.side == leftPaddle.GetSide()) leftPaddle.AddPoint();
-			else if (win.side == rightPaddle.GetSide()) rightPaddle.AddPoint();
-
-			Text winText = {win.text, 60};
+			// Adds the points
+			if (reseted) {
+				if (win.side == leftPaddle.GetSide()) leftPaddle.AddPoint();
+				else if (win.side == rightPaddle.GetSide()) rightPaddle.AddPoint();
+				reseted = false;
+			}
+			
+			Text winText = {win.text, 60}; // win message
 			winText.Render(screenCentre, YELLOW);
 
-			Text playAgainText = { "Press space to continue", 25 };
+			Text playAgainText = { "Press space to play again", 25 };
 			playAgainText.Render({ screenCentre.x, screenCentre.y + 50 }, YELLOW);
 
 			// Reset Game
@@ -246,6 +265,7 @@ int main() {
 				rightPaddle.ResetPosition();
 				win.text = nullptr;
 				won = false;
+				reseted = true;
 			}
 		}
 
