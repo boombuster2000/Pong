@@ -1,8 +1,3 @@
-# Description
-This project was for me to go more in depth into game development and to strengthen my skills in C++ development.
-This project will continue to grow and I will continue to add features until I'm satisfied and believe this game is at the best it can be although there is always room for improvment.
-
-
 # Forking
 This script is relies on the [raylib library](https://github.com/raysan5/raylib).
 
