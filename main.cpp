@@ -1,5 +1,4 @@
 #include "raylib.h"
-#include <iostream>
 
 enum Sides {
 LEFT = 0,
