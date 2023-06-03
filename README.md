@@ -4,7 +4,7 @@ This project will continue to grow and I will continue to add features until I'm
 
 
 # Forking
-This script is based of the [raylib library](https://github.com/raysan5/raylib).
+This script is relies on the [raylib library](https://github.com/raysan5/raylib).
 
 
 Make sure you install raylib before editting the script.
