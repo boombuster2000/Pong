@@ -209,7 +209,7 @@ Win checkWin(Ball ball) {
 	}
 }
 
-void display_menu(MenuOption selected) {
+void renderMenu(MenuOption selected) {
 
 	Text title = { "Menu", 100 };
 	Text two_player = { "2 Player", 40 };
@@ -231,7 +231,7 @@ void display_menu(MenuOption selected) {
 
 MenuOption menu(MenuOption selected) {
 	
-	display_menu(selected);
+	renderMenu(selected);
 
 	if (IsKeyDown(KEY_W) && selected != TWO_PLAYER) {
 		selected = TWO_PLAYER;
@@ -243,13 +243,7 @@ MenuOption menu(MenuOption selected) {
 	return selected;
 }
 
-bool init_game(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, bool* won) {
-	
-
-	return true;
-}
-
-void game() {
+void runGame() {
 	const Vector2 screenCentre = { GetScreenWidth() / 2.0F ,  GetScreenHeight() / 2.0F };
 
 	Paddle leftPaddle(LEFT, { 50, screenCentre.y });
@@ -275,7 +269,10 @@ void game() {
 			winText.Render(screenCentre, YELLOW);
 
 			Text playAgainText = { "Press space to play again", 25 };
-			playAgainText.Render({ screenCentre.x, screenCentre.y + 50 }, YELLOW);
+			playAgainText.Render({ screenCentre.x, screenCentre.y + 75 }, YELLOW);
+
+			Text exitText = { "Press backspace to exit", 25 };
+			exitText.Render({ screenCentre.x, screenCentre.y + 110 }, YELLOW);
 
 			// Reset Game
 			if (IsKeyPressed(KEY_SPACE)) {
@@ -325,7 +322,7 @@ int main() {
 
 	MenuOption selected = TWO_PLAYER;
 
-	// main game
+	// main appliccation
 	while (!WindowShouldClose()) {
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -335,7 +332,7 @@ int main() {
 		}
 		else {
 			if (selected == TWO_PLAYER) {
-				game();
+				runGame();
 			}
 			else if (selected == EXIT) {
 				break;
