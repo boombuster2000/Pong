@@ -229,9 +229,10 @@ void display_menu(MenuOption selected) {
 
 }
 
-
 MenuOption menu(MenuOption selected) {
 	
+	display_menu(selected);
+
 	if (IsKeyDown(KEY_W) && selected != TWO_PLAYER) {
 		selected = TWO_PLAYER;
 	}
@@ -239,23 +240,89 @@ MenuOption menu(MenuOption selected) {
 		selected = EXIT;
 	}
 
-	display_menu(selected);
-
 	return selected;
+}
+
+bool init_game(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, bool* won) {
+	
+
+	return true;
+}
+
+void game() {
+	const Vector2 screenCentre = { GetScreenWidth() / 2.0F ,  GetScreenHeight() / 2.0F };
+
+	Paddle leftPaddle(LEFT, { 50, screenCentre.y });
+	Paddle rightPaddle(RIGHT, { GetScreenWidth() - 50.0F, screenCentre.y });
+	Ball ball(screenCentre, Speed{ 300,300 });
+	bool addedPoint = false; // prevents points being added each frame after someone won
+
+	while (!WindowShouldClose()) {
+		BeginDrawing();
+		ClearBackground(BLACK);
+		Win win = checkWin(ball);
+
+		if (win.side != NONE and win.text != NULL) {
+
+			// Adds the points
+			if (!addedPoint) {
+				if (win.side == leftPaddle.GetSide()) leftPaddle.AddPoint();
+				else if (win.side == rightPaddle.GetSide()) rightPaddle.AddPoint();
+				addedPoint = true;
+			}
+
+			Text winText = { win.text, 60 }; // win message
+			winText.Render(screenCentre, YELLOW);
+
+			Text playAgainText = { "Press space to play again", 25 };
+			playAgainText.Render({ screenCentre.x, screenCentre.y + 50 }, YELLOW);
+
+			// Reset Game
+			if (IsKeyPressed(KEY_SPACE)) {
+				ball.Reset();
+				leftPaddle.ResetPosition();
+				rightPaddle.ResetPosition();
+				addedPoint = false;
+
+			}
+			else if (IsKeyPressed(KEY_BACKSPACE)) {
+				break;
+			}
+		}
+
+		else { // freezes movement if there is a winner
+			checkCollitions(&ball, leftPaddle, rightPaddle);
+			ball.Move();
+			leftPaddle.Move();
+			rightPaddle.Move();
+		}
+
+		//Render objects
+		ball.Render();
+		leftPaddle.Render();
+		rightPaddle.Render();
+
+
+		// Render Points
+		Text leftPaddlePointsText = { TextFormat("%i", leftPaddle.GetPoints()), 30 };
+		Text rightPaddlePointsText = { TextFormat("%i", rightPaddle.GetPoints()), 30 };
+
+		leftPaddlePointsText.Render({ 30,40 }, YELLOW);
+		rightPaddlePointsText.Render({ (float)GetScreenWidth() - 30,40 }, YELLOW);
+
+
+		DrawFPS(5, 5);
+		EndDrawing();
+
+	}
+
+
 }
 
 int main() {
 	InitWindow(800, 600, "Pong");
 	SetTargetFPS(144);
 
-	const Vector2 screenCentre = { GetScreenWidth() / 2.0F ,  GetScreenHeight() / 2.0F };
-
-	Paddle leftPaddle(LEFT, {50, screenCentre.y});
-	Paddle rightPaddle(RIGHT, { GetScreenWidth() - 50.0F, screenCentre.y });
-	Ball ball(screenCentre, Speed {300,300});
-
-	bool won = false;
-	bool reseted = true;
 	MenuOption selected = TWO_PLAYER;
 
 	// main game
@@ -263,61 +330,17 @@ int main() {
 		BeginDrawing();
 		ClearBackground(BLACK);
 
-		selected = menu(selected);
-
-
-
-
-
-		//if (!won) { // freezes movement if there is a winner
-		//	checkCollitions(&ball, leftPaddle, rightPaddle);
-		//	ball.Move();
-		//	leftPaddle.Move();
-		//	rightPaddle.Move();
-		//}
-
-		////Render objects
-		//ball.Render();
-		//leftPaddle.Render();
-		//rightPaddle.Render();
-
-
-		//// Render Points
-		//Text leftPaddlePointsText = { TextFormat("%i", leftPaddle.GetPoints()), 30};
-		//Text rightPaddlePointsText = { TextFormat("%i", rightPaddle.GetPoints()), 30 };
-		//
-		//leftPaddlePointsText.Render({ 30,40 }, YELLOW);
-		//rightPaddlePointsText.Render({ (float) GetScreenWidth() - 30,40}, YELLOW);
-
-
-		//Win win = checkWin(ball);
-
-		//if (win.side != NONE and win.text != NULL) {
-		//	won = true;
-
-		//	// Adds the points
-		//	if (reseted) {
-		//		if (win.side == leftPaddle.GetSide()) leftPaddle.AddPoint();
-		//		else if (win.side == rightPaddle.GetSide()) rightPaddle.AddPoint();
-		//		reseted = false;
-		//	}
-		//	
-		//	Text winText = {win.text, 60}; // win message
-		//	winText.Render(screenCentre, YELLOW);
-
-		//	Text playAgainText = { "Press space to play again", 25 };
-		//	playAgainText.Render({ screenCentre.x, screenCentre.y + 50 }, YELLOW);
-
-		//	// Reset Game
-		//	if (IsKeyPressed(KEY_SPACE)) {
-		//		ball.Reset();
-		//		leftPaddle.ResetPosition();
-		//		rightPaddle.ResetPosition();
-		//		win.text = nullptr;
-		//		won = false;
-		//		reseted = true;
-		//	}
-		//}
+		if (!IsKeyPressed(KEY_ENTER)) {
+			selected = menu(selected);
+		}
+		else {
+			if (selected == TWO_PLAYER) {
+				game();
+			}
+			else if (selected == EXIT) {
+				break;
+			}
+		}
 
 		DrawFPS(5, 5);
 		EndDrawing();
