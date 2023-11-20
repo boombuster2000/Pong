@@ -249,7 +249,7 @@ void runGame() {
 	Paddle leftPaddle(LEFT, { 50, screenCentre.y });
 	Paddle rightPaddle(RIGHT, { GetScreenWidth() - 50.0F, screenCentre.y });
 	Ball ball(screenCentre, Speed{ 300,300 });
-	bool addedPoint = false; // prevents points being added each frame after someone won
+	bool hasPointAdded = false; // prevents points being added each frame after someone won
 
 	while (!WindowShouldClose()) {
 		BeginDrawing();
@@ -259,10 +259,10 @@ void runGame() {
 		if (win.side != NONE and win.text != NULL) {
 
 			// Adds the points
-			if (!addedPoint) {
+			if (!hasPointAdded) {
 				if (win.side == leftPaddle.GetSide()) leftPaddle.AddPoint();
 				else if (win.side == rightPaddle.GetSide()) rightPaddle.AddPoint();
-				addedPoint = true;
+				hasPointAdded = true;
 			}
 
 			Text winText = { win.text, 60 }; // win message
@@ -279,7 +279,7 @@ void runGame() {
 				ball.Reset();
 				leftPaddle.ResetPosition();
 				rightPaddle.ResetPosition();
-				addedPoint = false;
+				hasPointAdded = false;
 
 			}
 			else if (IsKeyPressed(KEY_BACKSPACE)) {
