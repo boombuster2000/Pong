@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <random>
 #include "entities.h"
 
 
@@ -87,12 +88,26 @@ MenuOption menu(MenuOption selected) {
 	return selected;
 }
 
+Speed GetStartingBallSpeed(int requiredSpeed = 300)
+{
+	std::random_device rd;  // Seed
+	std::mt19937 gen(rd()); // Mersenne Twister engine
+	std::uniform_int_distribution<> dist(-212, 212); // Range: [1, 212]
+
+	Speed speed;
+	speed.y = dist(gen);
+
+	speed.x = sqrt(pow(requiredSpeed, 2) - pow(speed.y, 2)) * pow(-1, speed.y);
+
+	return speed;
+}
+
 void runGame() {
 	const Vector2 screenCentre = { GetScreenWidth() / 2.0F ,  GetScreenHeight() / 2.0F };
 
 	Paddle leftPaddle(LEFT, { 50, screenCentre.y });
 	Paddle rightPaddle(RIGHT, { GetScreenWidth() - 50.0F, screenCentre.y });
-	Ball ball(screenCentre, Speed{ 300,300 });
+	Ball ball(screenCentre, GetStartingBallSpeed());
 	bool hasPointAdded = false; // prevents points being added each frame after someone won
 
 	while (!WindowShouldClose()) {
