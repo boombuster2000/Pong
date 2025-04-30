@@ -41,7 +41,7 @@ class Paddle {
 public:
 	Sides m_side;
 	int m_points = 0;
-	float m_speed = 300;
+	float m_speed = 500;
 	Vector2 m_position;
 	Vector2 m_originalPosition;
 	Color m_colour = WHITE;
